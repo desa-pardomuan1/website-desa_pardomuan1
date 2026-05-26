@@ -1,0 +1,130 @@
+import { useState } from "react";
+import { trpc } from "@/providers/trpc";
+import AdminLayout from "@/components/AdminLayout";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Plus, Pencil, Trash2, Sprout } from "lucide-react";
+import { toast } from "sonner";
+
+const jenisOptions = [
+  { value: "pertanian", label: "Pertanian" },
+  { value: "peternakan", label: "Peternakan" },
+  { value: "perikanan", label: "Perikanan" },
+  { value: "perkebunan", label: "Perkebunan" },
+];
+
+export default function AdminKomoditas() {
+  const utils = trpc.useUtils();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [form, setForm] = useState({ nama: "", jenis: "pertanian" as "pertanian" | "peternakan" | "perikanan" | "perkebunan", deskripsi: "", luasLahan: "", hasilProduksi: "", satuan: "kg", fotoUrl: "", urutan: 0 });
+
+  const { data: komoditasList, isLoading } = trpc.desa.komoditas.list.useQuery();
+
+  const create = trpc.desa.komoditas.create.useMutation({
+    onSuccess: () => { utils.desa.komoditas.list.invalidate(); setDialogOpen(false); resetForm(); toast.success("Berhasil ditambahkan!"); },
+    onError: () => toast.error("Gagal menambahkan"),
+  });
+  const update = trpc.desa.komoditas.update.useMutation({
+    onSuccess: () => { utils.desa.komoditas.list.invalidate(); setDialogOpen(false); resetForm(); toast.success("Berhasil diperbarui!"); },
+    onError: () => toast.error("Gagal memperbarui"),
+  });
+  const deleteMutation = trpc.desa.komoditas.delete.useMutation({
+    onSuccess: () => { utils.desa.komoditas.list.invalidate(); toast.success("Berhasil dihapus!"); },
+    onError: () => toast.error("Gagal menghapus"),
+  });
+
+  const resetForm = () => { setForm({ nama: "", jenis: "pertanian" as "pertanian" | "peternakan" | "perikanan" | "perkebunan", deskripsi: "", luasLahan: "", hasilProduksi: "", satuan: "kg", fotoUrl: "", urutan: 0 }); setEditingId(null); };
+
+  const handleEdit = (item: any) => {
+    setEditingId(item.id);
+    setForm({ nama: item.nama, jenis: item.jenis as any, deskripsi: item.deskripsi || "", luasLahan: item.luasLahan || "", hasilProduksi: item.hasilProduksi || "", satuan: item.satuan || "kg", fotoUrl: item.fotoUrl || "", urutan: item.urutan || 0 });
+    setDialogOpen(true);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingId) update.mutate({ id: editingId, ...form });
+    else create.mutate(form);
+  };
+
+  return (
+    <AdminLayout>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div><h1 className="text-2xl font-bold text-gray-900">Kelola Komoditas</h1><p className="text-gray-500 text-sm mt-1">Pertanian, peternakan, perikanan</p></div>
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-emerald-700 hover:bg-emerald-800" onClick={() => { resetForm(); setDialogOpen(true); }}><Plus className="w-4 h-4 mr-2" /> Tambah</Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+              <DialogHeader><DialogTitle>{editingId ? "Edit" : "Tambah"} Komoditas</DialogTitle></DialogHeader>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div><Label>Nama</Label><Input value={form.nama} onChange={(e) => setForm({ ...form, nama: e.target.value })} required /></div>
+                <div>
+                  <Label>Jenis</Label>
+                  <Select value={form.jenis} onValueChange={(v) => setForm({ ...form, jenis: v as any })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>{jenisOptions.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div><Label>Luas Lahan (Ha)</Label><Input value={form.luasLahan} onChange={(e) => setForm({ ...form, luasLahan: e.target.value })} /></div>
+                  <div><Label>Hasil Produksi</Label><Input value={form.hasilProduksi} onChange={(e) => setForm({ ...form, hasilProduksi: e.target.value })} /></div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div><Label>Satuan</Label><Input value={form.satuan} onChange={(e) => setForm({ ...form, satuan: e.target.value })} placeholder="kg, ton, ekor" /></div>
+                  <div><Label>Urutan</Label><Input type="number" value={form.urutan} onChange={(e) => setForm({ ...form, urutan: parseInt(e.target.value) || 0 })} /></div>
+                </div>
+                <div><Label>Foto URL</Label><Input value={form.fotoUrl} onChange={(e) => setForm({ ...form, fotoUrl: e.target.value })} placeholder="https://..." /></div>
+                <div><Label>Deskripsi</Label><Textarea value={form.deskripsi} onChange={(e) => setForm({ ...form, deskripsi: e.target.value })} rows={3} /></div>
+                <Button type="submit" className="w-full bg-emerald-700 hover:bg-emerald-800" disabled={create.isPending || update.isPending}>
+                  {create.isPending || update.isPending ? "Menyimpan..." : editingId ? "Perbarui" : "Simpan"}
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        <Card className="border-0 shadow-sm">
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow><TableHead>Nama</TableHead><TableHead>Jenis</TableHead><TableHead>Produksi</TableHead><TableHead className="w-[100px]">Aksi</TableHead></TableRow>
+                </TableHeader>
+                <TableBody>
+                  {isLoading ? (
+                    <TableRow><TableCell colSpan={4} className="text-center py-8">Memuat...</TableCell></TableRow>
+                  ) : komoditasList && komoditasList.length > 0 ? (
+                    komoditasList.map((item) => (
+                      <TableRow key={item.id}>
+                        <TableCell className="font-medium">{item.nama}</TableCell>
+                        <TableCell className="capitalize">{item.jenis}</TableCell>
+                        <TableCell>{item.hasilProduksi ? `${item.hasilProduksi} ${item.satuan}` : "-"}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Button variant="ghost" size="sm" onClick={() => handleEdit(item)}><Pencil className="w-3.5 h-3.5" /></Button>
+                            <Button variant="ghost" size="sm" className="text-red-600" onClick={() => { if (confirm("Yakin?")) deleteMutation.mutate({ id: item.id }); }}><Trash2 className="w-3.5 h-3.5" /></Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow><TableCell colSpan={4} className="text-center py-8"><Sprout className="w-8 h-8 text-gray-300 mx-auto mb-2" /><p className="text-gray-500">Tidak ada data</p></TableCell></TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </AdminLayout>
+  );
+}
