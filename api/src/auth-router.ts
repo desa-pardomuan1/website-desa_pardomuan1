@@ -1,3 +1,4 @@
+import { z } from "zod";
 import * as cookie from "cookie";
 import { Session } from "@contracts/constants.ts";
 import { getSessionCookieOptions } from "./lib/cookies.ts";
@@ -21,16 +22,20 @@ export const authRouter = createRouter({
     );
     return { success: true };
   }),
-  resetPassword: publicQuery.mutation(async ({ input }) => {
-    const { username, oldPassword, newPassword } = input as {
-      username: string;
-      oldPassword: string;
-      newPassword: string;
-    };
+  resetPassword: publicQuery
+    .input(
+      z.object({
+        username: z.string(),
+        oldPassword: z.string(),
+        newPassword: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { username, oldPassword, newPassword } = input;
 
-    if (!username || !oldPassword || !newPassword) {
-      throw new Error("username, oldPassword, and newPassword are required");
-    }
+      if (!username || !oldPassword || !newPassword) {
+        throw new Error("username, oldPassword, and newPassword are required");
+      }
 
     // Validate old password against admin credentials
     const isValid =

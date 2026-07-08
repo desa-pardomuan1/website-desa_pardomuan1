@@ -51,6 +51,16 @@ const normalizeBorderRadius = (value: unknown) => {
   return mapped[normalized] ?? "md";
 };
 
+const normalizeDate = (value?: string) => {
+  if (value === undefined || value === null || value === "") return undefined;
+  return new Date(value);
+};
+
+const normalizeDecimal = (value?: string | number) => {
+  if (value === undefined || value === null) return undefined;
+  return typeof value === "number" ? value.toString() : value;
+};
+
 // ============================================================
 // Profil Desa Router
 // ============================================================
@@ -534,8 +544,12 @@ const galeriRouter = createRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const result = await db().insert(galeri).values(input);
-      return { id: Number((result as any)[0]?.insertId ?? 0), ...input };
+      const data = {
+        ...input,
+        tanggal: normalizeDate(input.tanggal),
+      };
+      const result = await db().insert(galeri).values(data as any);
+      return { id: Number((result as any)[0]?.insertId ?? 0), ...data };
     }),
 
   update: adminQuery
@@ -558,8 +572,12 @@ const galeriRouter = createRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const { id, ...data } = input;
-      await db().update(galeri).set(data).where(eq(galeri.id, id));
+      const { id, ...rest } = input;
+      const data = {
+        ...rest,
+        tanggal: normalizeDate(rest.tanggal),
+      };
+      await db().update(galeri).set(data as any).where(eq(galeri.id, id));
       return { id, ...data };
     }),
 
@@ -809,8 +827,14 @@ const apbdesRouter = createRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const result = await db().insert(apbdes).values(input);
-      return { id: Number((result as any)[0]?.insertId ?? 0), ...input };
+      const data = {
+        ...input,
+        pendapatanTotal: normalizeDecimal(input.pendapatanTotal),
+        belanjaTotal: normalizeDecimal(input.belanjaTotal),
+        pembiayaanTotal: normalizeDecimal(input.pembiayaanTotal),
+      };
+      const result = await db().insert(apbdes).values(data as any);
+      return { id: Number((result as any)[0]?.insertId ?? 0), ...data };
     }),
 
   update: adminQuery
@@ -828,8 +852,14 @@ const apbdesRouter = createRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const { id, ...data } = input;
-      await db().update(apbdes).set(data).where(eq(apbdes.id, id));
+      const { id, ...rest } = input;
+      const data = {
+        ...rest,
+        pendapatanTotal: normalizeDecimal(rest.pendapatanTotal),
+        belanjaTotal: normalizeDecimal(rest.belanjaTotal),
+        pembiayaanTotal: normalizeDecimal(rest.pembiayaanTotal),
+      };
+      await db().update(apbdes).set(data as any).where(eq(apbdes.id, id));
       return { id, ...data };
     }),
 
@@ -1019,6 +1049,7 @@ const jabatanDesaRouter = createRouter({
     .input(
       z.object({
         nama: z.string(),
+        pejabat: z.string(),
         urutan: z.number().optional(),
       })
     )
@@ -1264,8 +1295,16 @@ const pariwisataRouter = createRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const result = await db().insert(pariwisata).values(input);
-      return { id: Number((result as any)[0]?.insertId ?? 0), ...input };
+      const data = {
+        ...input,
+        latitude: normalizeDecimal(input.latitude),
+        longitude: normalizeDecimal(input.longitude),
+        hargaMin: normalizeDecimal(input.hargaMin),
+        hargaMax: normalizeDecimal(input.hargaMax),
+        rating: normalizeDecimal(input.rating),
+      };
+      const result = await db().insert(pariwisata).values(data as any);
+      return { id: Number((result as any)[0]?.insertId ?? 0), ...data };
     }),
 
   update: adminQuery
@@ -1288,8 +1327,16 @@ const pariwisataRouter = createRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const { id, ...data } = input;
-      await db().update(pariwisata).set(data).where(eq(pariwisata.id, id));
+      const { id, ...rest } = input;
+      const data = {
+        ...rest,
+        latitude: normalizeDecimal(rest.latitude),
+        longitude: normalizeDecimal(rest.longitude),
+        hargaMin: normalizeDecimal(rest.hargaMin),
+        hargaMax: normalizeDecimal(rest.hargaMax),
+        rating: normalizeDecimal(rest.rating),
+      };
+      await db().update(pariwisata).set(data as any).where(eq(pariwisata.id, id));
       return { id, ...data };
     }),
 
@@ -1332,14 +1379,15 @@ const pariwisataReviewsRouter = createRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const result = await db().insert(pariwisataReviews).values({
+      const data = {
         pariwisataId: input.pariwisataId,
         unionId: ctx.user.unionId,
-        rating: input.rating,
+        rating: normalizeDecimal(input.rating),
         review: input.ulasan,
         userId: ctx.user.id,
-      });
-      return { id: Number((result as any)[0]?.insertId ?? 0), ...input };
+      };
+      const result = await db().insert(pariwisataReviews).values(data as any);
+      return { id: Number((result as any)[0]?.insertId ?? 0), ...data };
     }),
 
   update: adminQuery
@@ -1353,13 +1401,16 @@ const pariwisataReviewsRouter = createRouter({
     )
     .mutation(async ({ input }) => {
       const { id, ulasan, ...rest } = input;
-      const data: Record<string, unknown> = { ...rest };
+      const data: Record<string, unknown> = {
+        ...rest,
+        rating: input.rating !== undefined ? normalizeDecimal(input.rating) : undefined,
+      };
       if (ulasan !== undefined) data.review = ulasan;
       await db()
         .update(pariwisataReviews)
         .set(data)
         .where(eq(pariwisataReviews.id, id));
-      return { id, ...input };
+      return { id, ...rest, review: ulasan };
     }),
 
   delete: adminQuery
@@ -1423,8 +1474,13 @@ const pendidikanRouter = createRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const result = await db().insert(pendidikan).values(input);
-      return { id: Number((result as any)[0]?.insertId ?? 0), ...input };
+      const data = {
+        ...input,
+        latitude: normalizeDecimal(input.latitude),
+        longitude: normalizeDecimal(input.longitude),
+      };
+      const result = await db().insert(pendidikan).values(data as any);
+      return { id: Number((result as any)[0]?.insertId ?? 0), ...data };
     }),
 
   update: adminQuery
@@ -1463,8 +1519,13 @@ const pendidikanRouter = createRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const { id, ...data } = input;
-      await db().update(pendidikan).set(data).where(eq(pendidikan.id, id));
+      const { id, ...rest } = input;
+      const data = {
+        ...rest,
+        latitude: normalizeDecimal(rest.latitude),
+        longitude: normalizeDecimal(rest.longitude),
+      };
+      await db().update(pendidikan).set(data as any).where(eq(pendidikan.id, id));
       return { id, ...data };
     }),
 
@@ -1523,8 +1584,13 @@ const kesehatanRouter = createRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const result = await db().insert(kesehatan).values(input);
-      return { id: Number((result as any)[0]?.insertId ?? 0), ...input };
+      const data = {
+        ...input,
+        latitude: normalizeDecimal(input.latitude),
+        longitude: normalizeDecimal(input.longitude),
+      };
+      const result = await db().insert(kesehatan).values(data as any);
+      return { id: Number((result as any)[0]?.insertId ?? 0), ...data };
     }),
 
   update: adminQuery
@@ -1557,8 +1623,13 @@ const kesehatanRouter = createRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const { id, ...data } = input;
-      await db().update(kesehatan).set(data).where(eq(kesehatan.id, id));
+      const { id, ...rest } = input;
+      const data = {
+        ...rest,
+        latitude: normalizeDecimal(rest.latitude),
+        longitude: normalizeDecimal(rest.longitude),
+      };
+      await db().update(kesehatan).set(data as any).where(eq(kesehatan.id, id));
       return { id, ...data };
     }),
 
@@ -1621,8 +1692,13 @@ const ekonomiRouter = createRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const result = await db().insert(ekonomi).values(input);
-      return { id: Number((result as any)[0]?.insertId ?? 0), ...input };
+      const data = {
+        ...input,
+        latitude: normalizeDecimal(input.latitude),
+        longitude: normalizeDecimal(input.longitude),
+      };
+      const result = await db().insert(ekonomi).values(data as any);
+      return { id: Number((result as any)[0]?.insertId ?? 0), ...data };
     }),
 
   update: adminQuery
@@ -1659,8 +1735,13 @@ const ekonomiRouter = createRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const { id, ...data } = input;
-      await db().update(ekonomi).set(data).where(eq(ekonomi.id, id));
+      const { id, ...rest } = input;
+      const data = {
+        ...rest,
+        latitude: normalizeDecimal(rest.latitude),
+        longitude: normalizeDecimal(rest.longitude),
+      };
+      await db().update(ekonomi).set(data as any).where(eq(ekonomi.id, id));
       return { id, ...data };
     }),
 
