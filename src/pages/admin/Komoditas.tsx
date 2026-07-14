@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Pencil, Trash2, Sprout } from "lucide-react";
 import { toast } from "sonner";
+import { parseGoogleDriveUrl } from "@/lib/utils";
 
 const jenisOptions = [
   { value: "pertanian", label: "Pertanian" },
@@ -82,7 +83,7 @@ export default function AdminKomoditas() {
                   <div><Label>Satuan</Label><Input value={form.satuan} onChange={(e) => setForm({ ...form, satuan: e.target.value })} placeholder="kg, ton, ekor" /></div>
                   <div><Label>Urutan</Label><Input type="number" value={form.urutan} onChange={(e) => setForm({ ...form, urutan: parseInt(e.target.value) || 0 })} /></div>
                 </div>
-                <div><Label>Foto URL</Label><Input value={form.fotoUrl} onChange={(e) => setForm({ ...form, fotoUrl: e.target.value })} placeholder="https://..." /></div>
+                <div><Label>Foto URL</Label><Input value={form.fotoUrl} onChange={(e) => setForm({ ...form, fotoUrl: parseGoogleDriveUrl(e.target.value) })} placeholder="https://..." /></div>
                 <div><Label>Deskripsi</Label><Textarea value={form.deskripsi} onChange={(e) => setForm({ ...form, deskripsi: e.target.value })} rows={3} /></div>
                 <Button type="submit" className="w-full bg-emerald-700 hover:bg-emerald-800" disabled={create.isPending || update.isPending}>
                   {create.isPending || update.isPending ? "Menyimpan..." : editingId ? "Perbarui" : "Simpan"}

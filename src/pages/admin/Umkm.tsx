@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Pencil, Trash2, Store } from "lucide-react";
 import { toast } from "sonner";
+import { parseGoogleDriveUrl } from "@/lib/utils";
 
 const kategoriOptions = [
   { value: "makanan", label: "Makanan" },
@@ -84,7 +85,7 @@ export default function AdminUmkm() {
                   <div><Label>Pemilik</Label><Input value={form.pemilik} onChange={(e) => setForm({ ...form, pemilik: e.target.value })} /></div>
                   <div><Label>Kontak</Label><Input value={form.kontak} onChange={(e) => setForm({ ...form, kontak: e.target.value })} /></div>
                 </div>
-                <div><Label>Foto URL</Label><Input value={form.fotoUrl} onChange={(e) => setForm({ ...form, fotoUrl: e.target.value })} placeholder="https://..." /></div>
+                <div><Label>Foto URL</Label><Input value={form.fotoUrl} onChange={(e) => setForm({ ...form, fotoUrl: parseGoogleDriveUrl(e.target.value) })} placeholder="https://..." /></div>
                 <div><Label>Link Produk</Label><Input value={form.link} onChange={(e) => setForm({ ...form, link: e.target.value })} placeholder="https://..." /></div>
                 <div><Label>Deskripsi</Label><Textarea value={form.deskripsi} onChange={(e) => setForm({ ...form, deskripsi: e.target.value })} rows={3} /></div>
                 <Button type="submit" className="w-full bg-emerald-700 hover:bg-emerald-800" disabled={create.isPending || update.isPending}>

@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/table";
 import { Plus, Pencil, Trash2, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
+import { parseGoogleDriveUrl } from "@/lib/utils";
 
 const jenisOptions = [
   { value: "pasar", label: "Pasar" },
@@ -410,7 +411,7 @@ export default function AdminEkonomi() {
                     <Input
                       value={form.fotoUrl}
                       onChange={(e) =>
-                        setForm({ ...form, fotoUrl: e.target.value })
+                        setForm({ ...form, fotoUrl: parseGoogleDriveUrl(e.target.value) })
                       }
                       placeholder="https://..."
                       className="mt-1"

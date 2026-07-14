@@ -40,6 +40,7 @@ import {
   Newspaper,
 } from "lucide-react";
 import { toast } from "sonner";
+import { parseGoogleDriveUrl } from "@/lib/utils";
 
 export default function AdminBerita() {
   const utils = trpc.useUtils();
@@ -269,7 +270,7 @@ export default function AdminBerita() {
                   <Input
                     value={form.gambarSampul}
                     onChange={(e) =>
-                      setForm({ ...form, gambarSampul: e.target.value })
+                      setForm({ ...form, gambarSampul: parseGoogleDriveUrl(e.target.value) })
                     }
                     placeholder="https://..."
                   />

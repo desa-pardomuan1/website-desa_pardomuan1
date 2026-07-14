@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Pencil, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
+import { parseGoogleDriveUrl } from "@/lib/utils";
 
 const jenisOptions = [
   { value: "pemerintahan", label: "Pemerintahan" },
@@ -80,7 +81,7 @@ export default function AdminLembaga() {
                   <div><Label>Ketua</Label><Input value={form.ketua} onChange={(e) => setForm({ ...form, ketua: e.target.value })} /></div>
                   <div><Label>Jumlah Anggota</Label><Input type="number" value={form.anggota} onChange={(e) => setForm({ ...form, anggota: parseInt(e.target.value) || 0 })} /></div>
                 </div>
-                <div><Label>Foto URL</Label><Input value={form.fotoUrl} onChange={(e) => setForm({ ...form, fotoUrl: e.target.value })} placeholder="https://..." /></div>
+                <div><Label>Foto URL</Label><Input value={form.fotoUrl} onChange={(e) => setForm({ ...form, fotoUrl: parseGoogleDriveUrl(e.target.value) })} placeholder="https://..." /></div>
                 <div><Label>Urutan</Label><Input type="number" value={form.urutan} onChange={(e) => setForm({ ...form, urutan: parseInt(e.target.value) || 0 })} /></div>
                 <div><Label>Deskripsi</Label><Textarea value={form.deskripsi} onChange={(e) => setForm({ ...form, deskripsi: e.target.value })} rows={4} /></div>
                 <Button type="submit" className="w-full bg-emerald-700 hover:bg-emerald-800" disabled={create.isPending || update.isPending}>

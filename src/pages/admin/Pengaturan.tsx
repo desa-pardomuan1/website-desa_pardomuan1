@@ -52,6 +52,7 @@ import {
   Globe,
 } from "lucide-react";
 import { toast } from "sonner";
+import { parseGoogleDriveUrl } from "@/lib/utils";
 
 const normalizeBorderRadius = (value: unknown): "none" | "sm" | "md" | "lg" | "full" => {
   const allowed = ["none", "sm", "md", "lg", "full"] as const;
@@ -625,7 +626,7 @@ export default function AdminPengaturan() {
                   <CardContent className="space-y-4">
                     <div>
                       <Label>Logo Utama</Label>
-                      <Input type="text" placeholder="URL logo" value={temaForm.logoUrl} onChange={(e) => setTemaForm({ ...temaForm, logoUrl: e.target.value })} className="mt-2" />
+                      <Input type="text" placeholder="URL logo" value={temaForm.logoUrl} onChange={(e) => setTemaForm({ ...temaForm, logoUrl: parseGoogleDriveUrl(e.target.value) })} className="mt-2" />
                     </div>
                     <div>
                       <Label>Logo Kecil</Label>

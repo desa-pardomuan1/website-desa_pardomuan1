@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Pencil, Trash2, Image } from "lucide-react";
 import { toast } from "sonner";
+import { parseGoogleDriveUrl } from "@/lib/utils";
 
 const kategoriOptions = [
   { value: "kegiatan", label: "Kegiatan" },
@@ -70,7 +71,7 @@ export default function AdminGaleri() {
               <DialogHeader><DialogTitle>{editingId ? "Edit" : "Tambah"} Foto</DialogTitle></DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div><Label>Judul</Label><Input value={form.judul} onChange={(e) => setForm({ ...form, judul: e.target.value })} required /></div>
-                <div><Label>Gambar URL</Label><Input value={form.gambarUrl} onChange={(e) => setForm({ ...form, gambarUrl: e.target.value })} placeholder="https://..." required /></div>
+                <div><Label>Gambar URL</Label><Input value={form.gambarUrl} onChange={(e) => setForm({ ...form, gambarUrl: parseGoogleDriveUrl(e.target.value) })} placeholder="https://..." required /></div>
                 <div>
                   <Label>Kategori</Label>
                   <Select value={form.kategori} onValueChange={(v) => setForm({ ...form, kategori: v as any })}>

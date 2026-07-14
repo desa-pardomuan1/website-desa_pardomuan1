@@ -28,6 +28,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Edit2, Trash2, Users, MapPin } from "lucide-react";
 import { toast } from "sonner";
+import { parseGoogleDriveUrl } from "@/lib/utils";
 import { getReplaceDesaTerm, useDesaStatus } from "@/hooks/useDesaStatus";
 
 export default function AdminSotkPage() {
@@ -418,7 +419,7 @@ export default function AdminSotkPage() {
                         onChange={(e) =>
                           setJabatanForm({
                             ...jabatanForm,
-                            fotoUrl: e.target.value,
+                            fotoUrl: parseGoogleDriveUrl(e.target.value),
                           })
                         }
                         placeholder="https://..."
