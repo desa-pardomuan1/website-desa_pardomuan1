@@ -13,7 +13,7 @@ jobs:
       - name: Ping Website and API
         run: |
           echo "Pinging main website..."
-          curl -s -o /dev/null -w "Status Code: %{http_code}\n" https://website-desa-huta-namora.vercel.app/
+          curl -s -o /dev/null -w "Status Code: %{http_code}\n" https://website-desa-pardomuan-1.vercel.app/
           
           echo "Pinging keepalive endpoint..."
-          curl -s -o /dev/null -w "Status Code: %{http_code}\n" https://website-desa-huta-namora.vercel.app/api/trpc/keepalive
+          curl -s -o /dev/null -w "Status Code: %{http_code}\n" https://website-desa-pardomuan-1.vercel.app/api/trpc/keepalive
