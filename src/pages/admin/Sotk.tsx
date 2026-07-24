@@ -30,6 +30,7 @@ import { Plus, Edit2, Trash2, Users, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import { getReplaceDesaTerm, useDesaStatus } from "@/hooks/useDesaStatus";
 import DriveImage from "@/components/DriveImage";
+import { parseGoogleDriveUrl } from "@/lib/utils";
 
 export default function AdminSotkPage() {
   const utils = trpc.useUtils();

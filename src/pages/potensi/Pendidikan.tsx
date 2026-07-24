@@ -13,7 +13,6 @@ import {
   Calendar,
   BookOpen,
 } from "lucide-react";
-import DriveImage from "@/components/DriveImage";
 
 const jenjangLabels: Record<string, string> = {
   paud: "PAUD",

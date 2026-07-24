@@ -1,8 +1,6 @@
 import { createTRPCReact } from "@trpc/react-query";
 import { httpBatchLink } from "@trpc/client";
-import { QueryClient } from "@tanstack/react-query";
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import superjson from "superjson";
 import type { AppRouter } from "../../api/src/router";
 import type { ReactNode } from "react";
@@ -14,8 +12,8 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: true,
       refetchOnReconnect: true,
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours garbage collection time
-      // Hindari banjir request ketika auth gagal (403/UNAUTHORIZED)
+      gcTime: 1000 * 60 * 60 * 24,
+      staleTime: 1000 * 60 * 5,
       retry: (failureCount, error: any) => {
         const msg = String(error?.message ?? "");
         const code = String(error?.data?.code ?? "");
@@ -24,16 +22,14 @@ const queryClient = new QueryClient({
           msg.toLowerCase().includes("forbidden") ||
           code === "UNAUTHORIZED" ||
           code === "FORBIDDEN";
+
         return !isAuthError && failureCount < 1;
       },
-      staleTime: 1000 * 60 * 5, // 5 minutes fresh time
     },
-    mutations: { retry: 0 },
+    mutations: {
+      retry: 0,
+    },
   },
-});
-
-const persister = createSyncStoragePersister({
-  storage: typeof window !== "undefined" ? window.localStorage : undefined,
 });
 
 const trpcClient = trpc.createClient({
@@ -59,13 +55,10 @@ const trpcClient = trpc.createClient({
 
 export function TRPCProvider({ children }: { children: ReactNode }) {
   return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <PersistQueryClientProvider
-        client={queryClient}
-        persistOptions={{ persister, maxAge: 1000 * 60 * 60 * 24 }}
-      >
+    <QueryClientProvider client={queryClient}>
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
         {children}
-      </PersistQueryClientProvider>
-    </trpc.Provider>
+      </trpc.Provider>
+    </QueryClientProvider>
   );
 }

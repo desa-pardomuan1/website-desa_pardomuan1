@@ -11,7 +11,6 @@ import {
   Clock,
   Heart,
 } from "lucide-react";
-import DriveImage from "@/components/DriveImage";
 
 const jenisLabels: Record<string, string> = {
   puskesmas: "Puskesmas",

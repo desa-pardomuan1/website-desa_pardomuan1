@@ -10,21 +10,37 @@ import { findUserByUnionId, upsertUser } from "../queries/users.js";
 
 export async function authenticateRequest(headers: Headers) {
   const cookies = cookie.parse(headers.get("cookie") || "");
+
+  console.log("[AUTH] Cookies:", cookies);
+
   const token = cookies[Session.cookieName];
+
   if (!token) {
-    console.warn("[auth] No session cookie found in request.");
+    console.warn("[AUTH] No session cookie found");
     throw Errors.forbidden("Invalid authentication token.");
   }
 
+  console.log("[AUTH] Token ditemukan");
+
   const claim = await verifySessionToken(token);
+
+  console.log("[AUTH] Claim:", claim);
+
   if (!claim) {
+    console.warn("[AUTH] JWT tidak valid");
     throw Errors.forbidden("Invalid authentication token.");
   }
 
   const user = await findUserByUnionId(claim.unionId);
+
+  console.log("[AUTH] User:", user);
+
   if (!user) {
+    console.warn("[AUTH] User tidak ditemukan");
     throw Errors.forbidden("User not found. Please re-login.");
   }
+
+  console.log("[AUTH] Auth berhasil");
 
   return user;
 }
@@ -32,6 +48,9 @@ export async function authenticateRequest(headers: Headers) {
 export function createLoginHandler() {
   return async (c: Context) => {
     const body = await c.req.json().catch(() => null);
+
+    console.log("[LOGIN] Request:", body);
+
     if (
       !body ||
       typeof body.username !== "string" ||
@@ -43,11 +62,16 @@ export function createLoginHandler() {
     const isValid =
       body.username === env.adminUsername &&
       body.password === env.adminPassword;
+
+    console.log("[LOGIN] Username:", body.username);
+    console.log("[LOGIN] Valid:", isValid);
+
     if (!isValid) {
       return c.json({ error: "Invalid username or password" }, 401);
     }
 
     const unionId = `local:${body.username}`;
+
     await upsertUser({
       unionId,
       name: body.username,
@@ -56,13 +80,23 @@ export function createLoginHandler() {
       lastSignInAt: new Date(),
     });
 
-    const token = await signSessionToken({ unionId, clientId: "local" });
+    console.log("[LOGIN] User di-upsert:", unionId);
+
+    const token = await signSessionToken({
+      unionId,
+      clientId: "local",
+    });
+
+    console.log("[LOGIN] JWT dibuat");
+
     const cookieOpts = getSessionCookieOptions(c.req.raw.headers);
 
     setCookie(c, Session.cookieName, token, {
       ...cookieOpts,
       maxAge: Session.maxAgeMs / 1000,
     });
+
+    console.log("[LOGIN] Cookie disimpan");
 
     return c.json({ success: true });
   };

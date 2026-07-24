@@ -478,32 +478,62 @@ const lembagaRouter = createRouter({
     }),
 
   create: adminQuery
-    .input(
-      z.object({
-        nama: z.string(),
-        deskripsi: z.string(),
-        gambar: z.string().optional(),
-      })
-    )
-    .mutation(async ({ input }) => {
-      const result = await db().insert(lembaga).values(input);
-      return { id: Number((result as any)[0]?.insertId ?? 0), ...input };
-    }),
+  .input(
+    z.object({
+      nama: z.string(),
+      jenis: z.enum([
+        "pemerintahan",
+        "bpd",
+        "pkk",
+        "karang_taruna",
+        "lpmd",
+        "lainnya",
+      ]),
+      deskripsi: z.string(),
+      fotoUrl: z.string().optional(),
+      ketua: z.string().optional(),
+      anggota: z.number().optional(),
+      urutan: z.number().optional(),
+    })
+  )
+  .mutation(async ({ input }) => {
+    const result = await db().insert(lembaga).values(input);
+    return {
+      id: Number((result as any)[0]?.insertId ?? 0),
+      ...input,
+    };
+  }),
 
   update: adminQuery
-    .input(
-      z.object({
-        id: z.number(),
-        nama: z.string().optional(),
-        deskripsi: z.string().optional(),
-        gambar: z.string().optional(),
-      })
-    )
-    .mutation(async ({ input }) => {
-      const { id, ...data } = input;
-      await db().update(lembaga).set(data).where(eq(lembaga.id, id));
-      return { id, ...data };
-    }),
+  .input(
+    z.object({
+      id: z.number(),
+      nama: z.string().optional(),
+      jenis: z.enum([
+        "pemerintahan",
+        "bpd",
+        "pkk",
+        "karang_taruna",
+        "lpmd",
+        "lainnya",
+      ]).optional(),
+      deskripsi: z.string().optional(),
+      fotoUrl: z.string().optional(),
+      ketua: z.string().optional(),
+      anggota: z.number().optional(),
+      urutan: z.number().optional(),
+    })
+  )
+  .mutation(async ({ input }) => {
+    const { id, ...data } = input;
+
+    await db()
+      .update(lembaga)
+      .set(data)
+      .where(eq(lembaga.id, id));
+
+    return { id, ...data };
+  }),
 
   delete: adminQuery
     .input(z.object({ id: z.number() }))

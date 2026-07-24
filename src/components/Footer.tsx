@@ -17,7 +17,6 @@ import {
   Link as LinkIcon,
   ChevronRight,
 } from "lucide-react";
-import DriveImage from "@/components/DriveImage";
 
 function getMedsosIcon(platform: string) {
   switch (platform.toLowerCase()) {

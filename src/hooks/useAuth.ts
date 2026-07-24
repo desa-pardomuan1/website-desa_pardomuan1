@@ -26,6 +26,14 @@ export function useAuth(options?: UseAuthOptions) {
     retry: false,
   });
 
+  // LOG DEBUG
+  console.log("[useAuth]", {
+    user,
+    isLoading,
+    redirectOnUnauthenticated,
+    path: window.location.pathname,
+  });
+
   const logoutMutation = trpc.auth.logout.useMutation({
     onSuccess: async () => {
       await utils.invalidate();
@@ -36,8 +44,18 @@ export function useAuth(options?: UseAuthOptions) {
   const logout = useCallback(() => logoutMutation.mutate(), [logoutMutation]);
 
   useEffect(() => {
+    console.log("[useAuth Effect]", {
+      user,
+      isLoading,
+      redirectOnUnauthenticated,
+      path: window.location.pathname,
+    });
+
     if (redirectOnUnauthenticated && !isLoading && !user) {
+      console.log("=== REDIRECT KE LOGIN ===");
+
       const currentPath = window.location.pathname;
+
       if (currentPath !== redirectPath) {
         navigate(redirectPath);
       }
