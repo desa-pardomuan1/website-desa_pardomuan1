@@ -46418,6 +46418,9 @@ var statistikDesa = mysqlTable("statistik_desa", {
   dataPendidikan: json2("data_pendidikan").$type(),
   dataAngkatanKerja: json2("data_angkatan_kerja").$type(),
   dataUsia: json2("data_usia").$type(),
+  infrastrukturPendidikan: json2("infrastruktur_pendidikan").$type(),
+  infrastrukturKesehatan: json2("infrastruktur_kesehatan").$type(),
+  infrastrukturEkonomi: json2("infrastruktur_ekonomi").$type(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull().$onUpdate(() => /* @__PURE__ */ new Date())
 });
@@ -47138,16 +47141,11 @@ var env = {
 var relations_exports = {};
 
 // server/queries/connection.ts
-var import_promise = __toESM(require_promise(), 1);
 var fullSchema = { ...schema_exports, ...relations_exports };
 var instance;
 function getDb() {
   if (!instance) {
-    const poolConnection = import_promise.default.createPool({
-      uri: env.databaseUrl,
-      connectTimeout: 5e3
-    });
-    instance = drizzle(poolConnection, {
+    instance = drizzle(env.databaseUrl, {
       mode: "default",
       schema: fullSchema
     });
@@ -47317,7 +47315,10 @@ var statistikRouter = createRouter({
       jumlahRW: external_exports.number().optional(),
       dataPendidikan: external_exports.any().optional(),
       dataAngkatanKerja: external_exports.any().optional(),
-      dataUsia: external_exports.any().optional()
+      dataUsia: external_exports.any().optional(),
+      infrastrukturPendidikan: external_exports.any().optional(),
+      infrastrukturKesehatan: external_exports.any().optional(),
+      infrastrukturEkonomi: external_exports.any().optional()
     })
   ).mutation(async ({ input }) => {
     const result = await db().insert(statistikDesa).values(input);
@@ -47337,7 +47338,10 @@ var statistikRouter = createRouter({
       jumlahRW: external_exports.number().optional(),
       dataPendidikan: external_exports.any().optional(),
       dataAngkatanKerja: external_exports.any().optional(),
-      dataUsia: external_exports.any().optional()
+      dataUsia: external_exports.any().optional(),
+      infrastrukturPendidikan: external_exports.any().optional(),
+      infrastrukturKesehatan: external_exports.any().optional(),
+      infrastrukturEkonomi: external_exports.any().optional()
     })
   ).mutation(async ({ input }) => {
     const { id, ...data } = input;
@@ -48627,6 +48631,11 @@ var sotkRouter = createRouter({
 // server/router.ts
 var appRouter = createRouter({
   ping: publicQuery.query(() => ({ ok: true, ts: Date.now() })),
+  keepalive: publicQuery.query(async () => {
+    const db3 = getDb();
+    await db3.execute(sql`SELECT 1`);
+    return { ok: true, ts: Date.now() };
+  }),
   auth: authRouter,
   desa: desaRouter,
   sotk: sotkRouter

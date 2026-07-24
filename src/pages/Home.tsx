@@ -7,6 +7,10 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+<<<<<<< HEAD
+=======
+import DriveImage from "@/components/DriveImage";
+>>>>>>> ea8bc8e7faf8583638c5d3ecc2d39275f1046436
 import {
   Users,
   MapPin,
