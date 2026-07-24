@@ -3,10 +3,7 @@ import { trpc } from "@/providers/trpc";
 import Layout from "@/components/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-<<<<<<< HEAD
-=======
 import DriveImage from "@/components/DriveImage";
->>>>>>> ea8bc8e7faf8583638c5d3ecc2d39275f1046436
 import {
   MapPin,
   Phone,
