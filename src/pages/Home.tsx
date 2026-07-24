@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-import DriveImage from "@/components/DriveImage";
   Users,
   MapPin,
   Building2,
@@ -17,6 +16,7 @@ import DriveImage from "@/components/DriveImage";
   ArrowRight,
   Calendar,
 } from "lucide-react";
+import DriveImage from "@/components/DriveImage";
 
 export default function Home() {
   const { data: profil } = trpc.desa.profil.list.useQuery();
@@ -29,7 +29,7 @@ export default function Home() {
   const { data: galeriList } = trpc.desa.galeri.list.useQuery();
   const { data: umkmList } = trpc.desa.umkm.list.useQuery();
 
-  const namaDesa = profil?.nama_desa || "Desa Cantik";
+  const namaDesa = profil?.nama_desa || "Desa Pardomuan I";
   const visi = profil?.visi || "";
 
   const formatDate = (date: Date | string | null) => {

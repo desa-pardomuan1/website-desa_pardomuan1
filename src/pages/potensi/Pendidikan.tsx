@@ -4,7 +4,6 @@ import Layout from "@/components/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
-import DriveImage from "@/components/DriveImage";
   MapPin,
   Phone,
   Mail,
@@ -13,6 +12,7 @@ import DriveImage from "@/components/DriveImage";
   Calendar,
   BookOpen,
 } from "lucide-react";
+import DriveImage from "@/components/DriveImage";
 
 const jenjangLabels: Record<string, string> = {
   paud: "PAUD",

@@ -1,7 +1,6 @@
 import { Link } from "react-router";
 import { trpc } from "@/providers/trpc";
 import {
-import DriveImage from "@/components/DriveImage";
   Home,
   MapPin,
   Phone,
@@ -17,6 +16,7 @@ import DriveImage from "@/components/DriveImage";
   Link as LinkIcon,
   ChevronRight,
 } from "lucide-react";
+import DriveImage from "@/components/DriveImage";
 
 function getMedsosIcon(platform: string) {
   switch (platform.toLowerCase()) {
