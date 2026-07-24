@@ -1,16 +1,18 @@
 import type { Context } from "hono";
 import { setCookie } from "hono/cookie";
 import * as cookie from "cookie";
-import { env } from "../lib/env";
-import { getSessionCookieOptions } from "../lib/cookies";
+
+import { env } from "../lib/env.js";
+import { getSessionCookieOptions } from "../lib/cookies.js";
 import { Session } from "@contracts/constants";
 import { Errors } from "@contracts/errors";
-import { signSessionToken, verifySessionToken } from "./session";
-import { findUserByUnionId, upsertUser } from "../queries/users";
+import { signSessionToken, verifySessionToken } from "./session.js";
+import { findUserByUnionId, upsertUser } from "../queries/users.js";
 
 export async function authenticateRequest(headers: Headers) {
   const cookies = cookie.parse(headers.get("cookie") || "");
   const token = cookies[Session.cookieName];
+
   if (!token) {
     console.warn("[auth] No session cookie found in request.");
     throw Errors.forbidden("Invalid authentication token.");
@@ -32,6 +34,7 @@ export async function authenticateRequest(headers: Headers) {
 export function createLoginHandler() {
   return async (c: Context) => {
     const body = await c.req.json().catch(() => null);
+
     if (
       !body ||
       typeof body.username !== "string" ||
@@ -43,11 +46,13 @@ export function createLoginHandler() {
     const isValid =
       body.username === env.adminUsername &&
       body.password === env.adminPassword;
+
     if (!isValid) {
       return c.json({ error: "Invalid username or password" }, 401);
     }
 
     const unionId = `local:${body.username}`;
+
     await upsertUser({
       unionId,
       name: body.username,
@@ -56,7 +61,11 @@ export function createLoginHandler() {
       lastSignInAt: new Date(),
     });
 
-    const token = await signSessionToken({ unionId, clientId: "local" });
+    const token = await signSessionToken({
+      unionId,
+      clientId: "local",
+    });
+
     const cookieOpts = getSessionCookieOptions(c.req.raw.headers);
 
     setCookie(c, Session.cookieName, token, {
@@ -67,4 +76,3 @@ export function createLoginHandler() {
     return c.json({ success: true });
   };
 }
-

@@ -1,14 +1,16 @@
 import * as cookie from "cookie";
 import { Session } from "@contracts/constants";
-import { getSessionCookieOptions } from "./lib/cookies";
-import { createRouter, authedQuery, publicQuery } from "./middleware";
-import { findUserByUsername, updateUserPassword } from "./queries/users";
-import { env } from "./lib/env";
+import { getSessionCookieOptions } from "./lib/cookies.js";
+import { createRouter, authedQuery, publicQuery } from "./middleware.js";
+import { findUserByUsername, updateUserPassword } from "./queries/users.js";
+import { env } from "./lib/env.js";
 
 export const authRouter = createRouter({
   me: authedQuery.query((opts) => opts.ctx.user),
+
   logout: authedQuery.mutation(async ({ ctx }) => {
     const opts = getSessionCookieOptions(ctx.req.headers);
+
     ctx.resHeaders.append(
       "set-cookie",
       cookie.serialize(Session.cookieName, "", {
@@ -19,8 +21,10 @@ export const authRouter = createRouter({
         maxAge: 0,
       }),
     );
+
     return { success: true };
   }),
+
   resetPassword: publicQuery.mutation(async ({ input }) => {
     const { username, oldPassword, newPassword } = input as {
       username: string;
@@ -32,17 +36,21 @@ export const authRouter = createRouter({
       throw new Error("username, oldPassword, and newPassword are required");
     }
 
-    // Validate old password against admin credentials
     const isValid =
-      username === env.adminUsername && oldPassword === env.adminPassword;
+      username === env.adminUsername &&
+      oldPassword === env.adminPassword;
+
     if (!isValid) {
       throw new Error("Invalid username or old password");
     }
 
-    // Update admin password
     if (username === env.adminUsername) {
       await updateUserPassword(username, newPassword);
-      return { success: true, message: "Password updated successfully" };
+
+      return {
+        success: true,
+        message: "Password updated successfully",
+      };
     }
 
     throw new Error("Only admin password reset is supported");

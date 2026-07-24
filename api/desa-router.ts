@@ -26,7 +26,6 @@ import {
   ekonomi,
 } from "@db/schema";
 import { createRouter, publicQuery, adminQuery, authedQuery } from "./middleware";
-import { sql } from "drizzle-orm";
 
 const db = () => getDb();
 
