@@ -17,7 +17,6 @@ import {
   ArrowRight,
   Calendar,
 } from "lucide-react";
-import DriveImage from "@/components/DriveImage";
 
 export default function Home() {
   const { data: profil } = trpc.desa.profil.list.useQuery();
