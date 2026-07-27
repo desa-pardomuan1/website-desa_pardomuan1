@@ -15,4 +15,7 @@ export const env = {
   isProduction: process.env.NODE_ENV === "production",
   databaseUrl: required("DATABASE_URL"),
   ownerUnionId: process.env.OWNER_UNION_ID ?? "",
+
+  // TAMBAHKAN INI
+  kimiOpenUrl: process.env.KIMI_OPEN_URL ?? "",
 };

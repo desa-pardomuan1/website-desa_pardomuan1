@@ -1393,7 +1393,7 @@ const pariwisataRouter = createRouter({
           await db()
             .update(pariwisataReviews)
             .set({
-              rating: input.rating,
+              rating: String(input.rating),
               review: input.review,
             })
             .where(eq(pariwisataReviews.id, existing[0].id));
@@ -1402,7 +1402,7 @@ const pariwisataRouter = createRouter({
             pariwisataId: input.id,
             userId: user?.id,
             unionId,
-            rating: input.rating,
+            rating: String(input.rating),
             review: input.review,
           });
         }
@@ -1416,7 +1416,7 @@ const pariwisataRouter = createRouter({
 
         await db()
           .update(pariwisata)
-          .set({ rating: avg })
+          .set({ rating: avg.toString(), })
           .where(eq(pariwisata.id, input.id));
 
         return { success: true };

@@ -1,17 +1,10 @@
 {
   "files": [],
   "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.node.json"
-    },
-    {
-      "path": "./tsconfig.server.json"
-    }
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" },
+    { "path": "./tsconfig.server.json" }
   ],
-  "include": ["src", "api", "server", "contracts", "db", "vite.config.ts"],
   "compilerOptions": {
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
