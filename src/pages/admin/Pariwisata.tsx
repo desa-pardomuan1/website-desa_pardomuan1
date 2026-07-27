@@ -187,11 +187,11 @@ export default function AdminPariwisata() {
     const submitData = {
       ...form,
       // backend schema expects optional string latitude/longitude
-      latitude: form.latitude ? form.latitude : undefined,
-      longitude: form.longitude ? form.longitude : undefined,
-      hargaMin: form.hargaMin ? form.hargaMin : undefined,
-      hargaMax: form.hargaMax ? form.hargaMax : undefined,
-      rating: form.rating ? form.rating : undefined,
+      latitude: form.latitude ? Number(form.latitude) : undefined,
+      longitude: form.longitude ? Number(form.longitude) : undefined,
+      hargaMin: form.hargaMin ? Number(form.hargaMin) : undefined,
+      hargaMax: form.hargaMax ? Number(form.hargaMax) : undefined,
+      rating: form.rating ? Number(form.rating) : undefined,
       urutan: Number(form.urutan ?? 0),
       kategori: form.kategori,
       // ensure arrays

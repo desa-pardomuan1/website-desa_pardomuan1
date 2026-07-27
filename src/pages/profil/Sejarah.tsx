@@ -36,7 +36,7 @@ export default function SejarahPage() {
 
       <div className="max-w-7xl mx-auto px-4 py-10 space-y-8">
         {/* Sejarah */}
-        <Card className="border-0 shadow-sm">
+        <Card className="border-0 rounded-2xl shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-xl">
               <BookOpen className="w-5 h-5 text-emerald-700" />
@@ -47,7 +47,10 @@ export default function SejarahPage() {
             <div className="prose prose-emerald max-w-none">
               {sejarah ? (
                 sejarah.split("\n").map((paragraph, i) => (
-                  <p key={i} className="text-gray-700 leading-relaxed mb-4">
+                  <p
+                    key={i}
+                    className="border-l-4 border-emerald-600 pl-5 text-gray-700 leading-8 mb-6 text-justify"
+                  >
                     {paragraph}
                   </p>
                 ))
@@ -64,17 +67,21 @@ export default function SejarahPage() {
         {/* Visi & Misi Grid */}
         <div className="grid md:grid-cols-2 gap-6">
           {/* Visi */}
-          <Card className="border-0 shadow-sm bg-gradient-to-br from-emerald-50 to-teal-50">
+          <Card className="border-0 rounded-2xl shadow-lg bg-gradient-to-br from-emerald-50 to-teal-50 hover:shadow-xl transition-all duration-300">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
                 <Eye className="w-5 h-5 text-emerald-700" />
                 Visi
               </CardTitle>
+
+              <p className="text-sm text-gray-500 mt-2">
+                Arah pembangunan Desa Pardomuan I.
+              </p>
             </CardHeader>
             <CardContent>
               {visi ? (
-                <p className="text-gray-700 leading-relaxed font-medium">
-                  {visi}
+                <p className="text-xl font-semibold italic text-center text-emerald-800 leading-9">
+                  "{visi}"
                 </p>
               ) : (
                 <p className="text-gray-500 italic">
@@ -85,7 +92,7 @@ export default function SejarahPage() {
           </Card>
 
           {/* Misi */}
-          <Card className="border-0 shadow-sm bg-gradient-to-br from-blue-50 to-indigo-50">
+          <Card className="border-0 rounded-2xl shadow-lg bg-gradient-to-br from-blue-50 to-teal-50 hover:shadow-xl transition-all duration-300">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
                 <Target className="w-5 h-5 text-blue-700" />
@@ -97,8 +104,8 @@ export default function SejarahPage() {
                 <ul className="space-y-3">
                   {misi.map((item, i) => (
                     <li key={i} className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-blue-600 mt-1 shrink-0" />
-                      <span className="text-gray-700 text-sm leading-relaxed">
+                      <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
+                      <span className="text-[15px] text-gray-700 leading-7">
                         {item}
                       </span>
                     </li>

@@ -4,7 +4,14 @@ import Layout from "@/components/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MapPin, Phone, Banknote, Star, ImageIcon } from "lucide-react";
+import {
+  MapPin,
+  Phone,
+  Banknote,
+  Star,
+  ImageIcon,
+  Navigation as NavigationIcon,
+} from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay, A11y } from "swiper/modules";
 import "swiper/css";
@@ -40,6 +47,13 @@ export default function PariwisataPage({ type }: { type?: "penginapan" | "objek_
     const phoneNumber = (nomor || "").replace(/\D/g, "");
     if (!phoneNumber) return;
     window.open(`https://wa.me/${phoneNumber}`, "_blank");
+  };
+
+  const openMaps = (latitude?: number, longitude?: number) => {
+    if (latitude == null || longitude == null) return;
+
+    const url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+    window.open(url, "_blank");
   };
 
   return (
@@ -178,8 +192,24 @@ export default function PariwisataPage({ type }: { type?: "penginapan" | "objek_
                         </div>
                       )}
 
-                      <div className="border-t pt-6">
-                        <h3 className="font-semibold text-lg text-gray-900 mb-3">Hubungi Kami</h3>
+                      <div className="border-t pt-6 space-y-4">
+                        <h3 className="font-semibold text-lg text-gray-900">
+                          Kontak & Lokasi
+                        </h3>
+
+                        {selectedItem.latitude && selectedItem.longitude && (
+                          <Button
+                            variant="outline"
+                            onClick={() =>
+                              openMaps(selectedItem.latitude, selectedItem.longitude)
+                            }
+                            className="w-full border-emerald-600 text-emerald-700 hover:bg-emerald-50 py-3 rounded-lg font-semibold flex items-center justify-center gap-2"
+                          >
+                            <NavigationIcon className="w-5 h-5" />
+                            Lihat Lokasi di Google Maps
+                          </Button>
+                        )}
+
                         {selectedItem.kontakWhatsapp ? (
                           <Button
                             onClick={() => openWhatsApp(selectedItem.kontakWhatsapp)}

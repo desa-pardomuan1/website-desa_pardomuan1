@@ -64,10 +64,10 @@ export default function Footer() {
   const { data: temaWebsite } = trpc.desa.tema.temaWebsite.list.useQuery();
 
   const tema = Array.isArray(temaWebsite) ? temaWebsite[0] : temaWebsite;
-  const namaDesa = profil?.nama_desa || "Desa Cantik";
-  const kecamatan = profil?.kecamatan || "Kecamatan";
-  const kabupaten = profil?.kabupaten || "Kabupaten";
-  const provinsi = profil?.provinsi || "Provinsi";
+  const namaDesa = profil?.nama_desa || "Desa Pardomuan I";
+  const kecamatan = profil?.kecamatan || "Pangururan";
+  const kabupaten = profil?.kabupaten || "Samosir";
+  const provinsi = profil?.provinsi || "Sumatera Utara";
   const kontakWa = profil?.kontak_wa || "";
   const kontakEmail = profil?.kontak_email || "";
   const kontakTelepon = profil?.kontak_telepon || "";
@@ -75,6 +75,12 @@ export default function Footer() {
     profil?.footer_teks ||
     "Hasil Pembinaan Desa Cantik (Desa Cinta Statistik) BPS Kabupaten Samosir";
   const footerLogoUrl = profil?.footer_logo_url || (tema as any)?.logoUrl || (tema as any)?.logoKecilUrl || "";
+  const footerTeksKkn =
+    profil?.footer_teks_kkn ||
+    "Website Dikembangkan oleh\nMahasiswa KKN Universitas Negeri Medan\nKelompok 2 Tahun 2026";
+
+  const footerLogoUnimed = profil?.footer_logo_unimed || "";
+  const footerLogo3 = profil?.footer_logo_3 || "";
   const medsosRaw = profil?.medsos || "{}";
   let medsos: Record<string, string> = {};
   try {
@@ -178,25 +184,51 @@ export default function Footer() {
 
       {/* Attribution Bar */}
       <div className="border-t border-white/10 bg-black/10 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-2 md:gap-4">
-            {footerLogoUrl ? (
-              <DriveImage
-                key={footerLogoUrl || "footer-logo"}
-                src={footerLogoUrl}
-                alt="Logo BPS"
-                className="h-8 object-contain mx-auto md:mx-0 opacity-90"
-              />
-            ) : (
-              <div className="h-8 w-8 bg-white/20 rounded-lg flex items-center justify-center shrink-0 mx-auto md:mx-0">
-                <span className="text-[9px] font-extrabold text-white">BPS</span>
-              </div>
-            )}
+        <div className="max-w-7xl mx-auto px-4 py-4">
 
-            <p className="text-[10px] sm:text-xs text-white/70 text-center font-medium">
-              {footerTeks}
-            </p>
+          <div className="flex flex-col items-center gap-3">
+
+            {/* Logo */}
+            <div className="flex items-center justify-center gap-6">
+
+              {footerLogoUrl && (
+                <DriveImage
+                  src={footerLogoUrl}
+                  className="h-10 object-contain"
+                />
+              )}
+
+              {footerLogoUnimed && (
+                <DriveImage
+                  src={footerLogoUnimed}
+                  className="h-10 object-contain"
+                />
+              )}
+
+              {footerLogo3 && (
+                <DriveImage
+                  src={footerLogo3}
+                  className="h-10 object-contain"
+                />
+              )}
+
+            </div>
+
+            {/* Teks */}
+            <div className="text-center text-[10px] sm:text-xs text-white/70 font-medium leading-6">
+              {footerTeks.split("\n").map((line, index) => (
+                <p key={index}>{line}</p>
+              ))}
+
+              <div className="h-2" />
+
+              {footerTeksKkn.split("\n").map((line, index) => (
+                <p key={index}>{line}</p>
+              ))}
+            </div>
+
           </div>
+
         </div>
       </div>
 

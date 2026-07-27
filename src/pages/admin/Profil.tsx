@@ -161,7 +161,10 @@ export default function AdminProfil() {
       medsos: profil.medsos || "{}",
       google_maps_embed: profil.google_maps_embed || "",
       footer_teks: profil.footer_teks || "",
+      footer_teks_kkn: profil.footer_teks_kkn || "",
       footer_logo_url: profil.footer_logo_url || "",
+      footer_logo_unimed: profil.footer_logo_unimed || "",
+      footer_logo_3: profil.footer_logo_3 || "",
       layanan_mandiri_url: profil.layanan_mandiri_url || "",
       logo_url: profil.logo_url || "",
     });
@@ -221,12 +224,19 @@ export default function AdminProfil() {
     nextForm.medsos = JSON.stringify(medsosObj);
 
     if (hasValidLatLon) {
+      const geo = safeParseJson<Record<string, any>>(
+        form.geografis || "{}",
+        {}
+      );
+
       nextForm.geografis = JSON.stringify({
+        ...geo,
         latitude: lat,
         longitude: lon,
       });
     }
-
+    console.log("NEXT FORM =", nextForm);
+    console.log("GEOGRAFIS =", nextForm.geografis);
     setProfil.mutate(nextForm);
   };
 
@@ -463,27 +473,41 @@ export default function AdminProfil() {
             <TabsContent value="media">
               <Card className="border-0 shadow-sm">
                 <CardContent className="p-6 space-y-4">
+
+                  {/* Media Sosial */}
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <Label>Media Sosial</Label>
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => setMedsosList([...medsosList, { platform: "facebook", url: "" }])}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          setMedsosList([
+                            ...medsosList,
+                            { platform: "facebook", url: "" },
+                          ])
+                        }
                       >
                         <Plus className="w-4 h-4 mr-1" />
                         Tambah Media Sosial
                       </Button>
                     </div>
+
                     {medsosList.length === 0 && (
-                      <p className="text-sm text-gray-500 italic py-2">Belum ada media sosial ditambahkan.</p>
+                      <p className="text-sm text-gray-500 italic py-2">
+                        Belum ada media sosial ditambahkan.
+                      </p>
                     )}
+
                     <div className="space-y-3">
                       {medsosList.map((m, idx) => (
-                        <div key={idx} className="flex gap-3 items-center bg-gray-50 p-2 rounded-lg border">
-                          <select 
-                            className="flex h-10 w-1/3 items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        <div
+                          key={idx}
+                          className="flex gap-3 items-center bg-gray-50 p-2 rounded-lg border"
+                        >
+                          <select
+                            className="flex h-10 w-1/3 items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm"
                             value={m.platform}
                             onChange={(e) => {
                               const newList = [...medsosList];
@@ -501,9 +525,10 @@ export default function AdminProfil() {
                             <option value="telegram">Telegram</option>
                             <option value="lainnya">Lainnya</option>
                           </select>
-                          <Input 
+
+                          <Input
                             className="flex-1"
-                            placeholder="https://..." 
+                            placeholder="https://..."
                             value={m.url}
                             onChange={(e) => {
                               const newList = [...medsosList];
@@ -511,14 +536,17 @@ export default function AdminProfil() {
                               setMedsosList(newList);
                             }}
                           />
-                          <Button 
-                            type="button" 
-                            variant="ghost" 
+
+                          <Button
+                            type="button"
+                            variant="ghost"
                             size="icon"
                             className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                            onClick={() => {
-                              setMedsosList(medsosList.filter((_, i) => i !== idx));
-                            }}
+                            onClick={() =>
+                              setMedsosList(
+                                medsosList.filter((_, i) => i !== idx)
+                              )
+                            }
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -526,25 +554,79 @@ export default function AdminProfil() {
                       ))}
                     </div>
                   </div>
-                  <div>
-                    <Label>Footer Teks BPS</Label>
-                    <Textarea
-                      value={form.footer_teks || ""}
-                      onChange={(e) =>
-                        setForm({ ...form, footer_teks: e.target.value })
-                      }
-                      rows={2}
-                    />
+
+                  {/* Footer */}
+                  <div className="border-t pt-4 space-y-4">
+
+                    <div>
+                      <Label>Footer Teks BPS</Label>
+                      <Textarea
+                        rows={2}
+                        value={form.footer_teks || ""}
+                        onChange={(e) =>
+                          setForm({
+                            ...form,
+                            footer_teks: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div>
+                      <Label>Footer Teks KKN</Label>
+                      <Textarea
+                        rows={3}
+                        value={form.footer_teks_kkn || ""}
+                        onChange={(e) =>
+                          setForm({
+                            ...form,
+                            footer_teks_kkn: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div>
+                      <Label>Logo BPS</Label>
+                      <Input
+                        value={form.footer_logo_url || ""}
+                        onChange={(e) =>
+                          setForm({
+                            ...form,
+                            footer_logo_url: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div>
+                      <Label>Logo UNIMED</Label>
+                      <Input
+                        value={form.footer_logo_unimed || ""}
+                        onChange={(e) =>
+                          setForm({
+                            ...form,
+                            footer_logo_unimed: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div>
+                      <Label>Logo Ketiga</Label>
+                      <Input
+                        value={form.footer_logo_3 || ""}
+                        onChange={(e) =>
+                          setForm({
+                            ...form,
+                            footer_logo_3: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
                   </div>
-                  <div>
-                    <Label>Footer Logo URL</Label>
-                    <Input
-                      value={form.footer_logo_url || ""}
-                      onChange={(e) =>
-                        setForm({ ...form, footer_logo_url: e.target.value })
-                      }
-                    />
-                  </div>
+
                 </CardContent>
               </Card>
             </TabsContent>
