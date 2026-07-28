@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Shield, Vote, Gavel } from "lucide-react";
+import { Shield } from "lucide-react";
 import SubmenuHeader from "@/components/SubmenuHeader";
 import DriveImage from "@/components/DriveImage";
 

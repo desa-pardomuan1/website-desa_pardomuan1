@@ -15,7 +15,6 @@ import {
   MapPin,
   Phone,
   Share2,
-  RotateCcw,
   ThermometerSun,
   Droplets,
   Wind,

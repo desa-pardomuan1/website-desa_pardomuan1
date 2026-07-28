@@ -203,7 +203,7 @@ export default function AdminPariwisata() {
     else create.mutate(submitData as any);
   };
 
-  const mapsLinkFor = (item: any) => {
+  const _mapsLinkFor = (item: any) => {
     const lat = item.latitude;
     const lng = item.longitude;
     if (lat && lng) {

@@ -42,9 +42,9 @@ export default function StatistikPage() {
   const dataAngkatanKerja = statistik?.dataAngkatanKerja;
   const dataUsia = statistik?.dataUsia;
 
-  const infrastrukturPendidikan = statistik?.infrastrukturPendidikan || {};
-  const infrastrukturKesehatan = statistik?.infrastrukturKesehatan || {};
-  const infrastrukturEkonomi = statistik?.infrastrukturEkonomi || {};
+  const infrastrukturPendidikan: any = statistik?.infrastrukturPendidikan || {};
+  const infrastrukturKesehatan: any = statistik?.infrastrukturKesehatan || {};
+  const infrastrukturEkonomi: any = statistik?.infrastrukturEkonomi || {};
 
   const tahunKependudukan = statistik?.tahun || new Date().getFullYear();
   const tahunPendidikan = infrastrukturPendidikan.tahun || tahunKependudukan;

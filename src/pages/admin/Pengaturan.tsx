@@ -378,7 +378,7 @@ export default function AdminPengaturan() {
     if (editingJabatanId) {
       updateJabatan.mutate({ id: editingJabatanId, nama: jabatanForm.nama, urutan: jabatanForm.urutan });
     } else {
-      createJabatan.mutate({ nama: jabatanForm.nama, urutan: jabatanForm.urutan });
+      createJabatan.mutate({ nama: jabatanForm.nama, urutan: jabatanForm.urutan, pejabat: "" });
     }
   };
 

@@ -14,7 +14,6 @@ import {
   Compass,
   Navigation,
   Ruler,
-  RotateCcw,
   Map,
 } from "lucide-react";
 

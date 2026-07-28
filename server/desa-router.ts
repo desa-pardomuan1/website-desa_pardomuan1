@@ -463,9 +463,18 @@ const dokumenRouter = createRouter({
 // Lembaga Router
 // ============================================================
 const lembagaRouter = createRouter({
-  list: publicQuery.query(async () => {
-    return db().select().from(lembaga).orderBy(desc(lembaga.createdAt));
-  }),
+  list: publicQuery
+    .input(z.object({ jenis: z.string().optional() }).optional())
+    .query(async ({ input }) => {
+      if (input?.jenis) {
+        return db()
+          .select()
+          .from(lembaga)
+          .where(eq(lembaga.jenis, input.jenis as any))
+          .orderBy(desc(lembaga.createdAt));
+      }
+      return db().select().from(lembaga).orderBy(desc(lembaga.createdAt));
+    }),
 
   getById: publicQuery
     .input(z.object({ id: z.number() }))
@@ -779,25 +788,39 @@ const pengaduanRouter = createRouter({
       return rows[0] || null;
     }),
 
-  create: authedQuery
+  create: publicQuery
     .input(
       z.object({
-        judul: z.string(),
-        deskripsi: z.string(),
+        judul: z.string().optional(),
+        deskripsi: z.string().optional(),
         gambar: z.string().optional(),
+        nama: z.string().optional(),
+        kontak: z.string().optional(),
+        email: z.string().optional(),
+        pesan: z.string().optional(),
       })
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       const result = await db().insert(pengaduan).values({
-        ...input,
-        nama: input.judul,
-        kontak: "", // You might need to adjust this based on your user context
-        pesan: input.deskripsi,
+        nama: input.nama || input.judul || "-",
+        kontak: input.kontak || "",
+        email: input.email || "",
+        pesan: input.pesan || input.deskripsi || "",
         status: "baru",
-        email: "", // You might need to adjust this based on your user context
-        // userId: ctx.user.id, // userId is not in the schema for pengaduan
       });
-      return { id: Number((result as any)[0]?.insertId ?? 0), ...input, status: "pending" };
+      return { id: Number((result as any)[0]?.insertId ?? 0), ...input, status: "baru" };
+    }),
+
+  updateStatus: adminQuery
+    .input(
+      z.object({
+        id: z.number(),
+        status: z.enum(["baru", "diproses", "selesai", "ditolak"]),
+      })
+    )
+    .mutation(async ({ input }) => {
+      await db().update(pengaduan).set({ status: input.status }).where(eq(pengaduan.id, input.id));
+      return { success: true };
     }),
 
   update: adminQuery
@@ -1089,12 +1112,15 @@ const jabatanDesaRouter = createRouter({
     .input(
       z.object({
         nama: z.string(),
-        pejabat: z.string(),
+        pejabat: z.string().optional(),
         urutan: z.number().optional(),
       })
     )
     .mutation(async ({ input }) => {
-      const result = await db().insert(jabatanDesa).values(input);
+      const result = await db().insert(jabatanDesa).values({
+        ...input,
+        pejabat: input.pejabat || "",
+      });
       return { id: Number((result as any)[0]?.insertId ?? 0), ...input };
     }),
 

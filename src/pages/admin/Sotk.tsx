@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { trpc } from "@/providers/trpc";
 import AdminLayout from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -150,7 +150,7 @@ export default function AdminSotkPage() {
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === "string") {
-        setJabatanForm((prev) => ({ ...prev, fotoUrl: reader.result }));
+        setJabatanForm((prev) => ({ ...prev, fotoUrl: reader.result as string }));
       }
     };
     reader.readAsDataURL(file);
@@ -163,7 +163,7 @@ export default function AdminSotkPage() {
       pejabatNama: item.pejabatNama,
       fotoUrl: item.fotoUrl || "",
       deskripsi: item.deskripsi || "",
-      parentId: item.parentId,
+      parentId: item.parentId ?? null,
       urutan: item.urutan || 0,
     });
     setJabatanDialogOpen(true);
@@ -487,10 +487,10 @@ export default function AdminSotkPage() {
                       type="submit"
                       className="w-full"
                       disabled={
-                        createJabatan.isLoading || updateJabatan.isLoading
+                        createJabatan.isPending || updateJabatan.isPending
                       }
                     >
-                      {createJabatan.isLoading || updateJabatan.isLoading
+                      {createJabatan.isPending || updateJabatan.isPending
                         ? "Menyimpan..."
                         : editingJabatanId
                         ? "Perbarui"
